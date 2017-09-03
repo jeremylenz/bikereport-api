@@ -36,7 +36,18 @@ class Api::V1::ReportsController < ApplicationController
     else
       @reports = Report.all
     end
-    render json: @reports
+    sorted_reports = @reports.sort { |a, b|
+      case
+      when a.updated_at > b.updated_at
+        -1
+      when a.updated_at < b.updated_at
+        1
+      else
+        0
+      end
+        }
+    render json: sorted_reports
+
   end
 
   def show

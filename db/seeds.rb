@@ -5,3 +5,9 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+User.create(username: "JerBear", email: "jerbear@jerbear.com")
+BikePath.create(name: "None")
+BikePath.create(name: "West Side Bike Path - Manhattan")
+BikePath.create(name: "East Side Bike Path = Manhattan")
+BikePath.create(name: "9th Ave Protected Bike Lane - Manhattan")

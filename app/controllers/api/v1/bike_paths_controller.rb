@@ -6,7 +6,6 @@ class Api::V1::BikePathsController < ApplicationController
   def create
 
     new_bike_path = BikePath.new(bike_path_params)
-    new_bike_path.user = user
     new_bike_path.save
 
     if !new_bike_path.errors.empty?
@@ -24,11 +23,7 @@ class Api::V1::BikePathsController < ApplicationController
 
 
   def index
-    if params[:id]
-      @bike_paths = User.find(params[:id]).bike_paths
-    else
       @bike_paths = BikePath.all
-    end
     render json: @bike_paths
   end
 
@@ -52,7 +47,7 @@ class Api::V1::BikePathsController < ApplicationController
   end
 
   def bike_path_params
-    params.require(:bike_path).permit(:lat, :long, :name)
+    params.require(:bike_path).permit(:name)
   end
 
 end
