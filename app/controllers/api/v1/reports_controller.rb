@@ -1,6 +1,7 @@
 class Api::V1::ReportsController < ApplicationController
 
   before_action :set_report, except: [:index, :create, :generate]
+  skip_before_action :authenticate, only: [:index, :show]
 
   def create
 

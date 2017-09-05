@@ -1,6 +1,8 @@
 class Api::V1::LocationsController < ApplicationController
 
   before_action :set_location, except: [:index, :create]
+  skip_before_action :authenticate, only: [:index, :show]
+
 
   def create
 

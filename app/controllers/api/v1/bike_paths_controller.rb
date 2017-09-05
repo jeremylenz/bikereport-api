@@ -2,6 +2,8 @@ class Api::V1::BikePathsController < ApplicationController
 
 
   before_action :set_bike_path, except: [:index, :create]
+  skip_before_action :authenticate, only: [:index, :show]
+
 
   def create
 
