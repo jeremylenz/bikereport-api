@@ -8,8 +8,11 @@ class ApplicationController < ActionController::API
 
   def current_user
     if auth_present?
-      user = User.find(auth["user"])
+      user_id = auth["user"]["id"]
+      puts 'user_id: ', user_id
+      user = User.find(user_id)
       if user
+        puts 'JWT token found'
         @current_user ||= user
       end
     end
@@ -23,8 +26,7 @@ class ApplicationController < ActionController::API
   private
 
     def token
-      request.env["HTTP_AUTHORIZATION"].scan(/Bearer
-        (.*)$/).flatten.last
+      request.env["HTTP_AUTHORIZATION"].scan(/Bearer(.*)$/).flatten.last.strip
     end
 
     def auth
@@ -32,8 +34,7 @@ class ApplicationController < ActionController::API
     end
 
     def auth_present?
-      !!request.env.fetch("HTTP_AUTHORIZATION",
-        "").scan(/Bearer/).flatten.first
+      !!request.env.fetch("HTTP_AUTHORIZATION","").scan(/Bearer/).flatten.first
     end
 
 end

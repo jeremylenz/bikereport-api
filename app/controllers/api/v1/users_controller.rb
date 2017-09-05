@@ -1,7 +1,7 @@
 
 class Api::V1::UsersController < ApplicationController
 
-  skip_before_action :authenticate, only: [:create]
+  skip_before_action :authenticate, only: [:create, :index]
   before_action :set_user, except: [:index, :create]
 
   def create
@@ -49,7 +49,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:username, :email)
+    params.require(:user).permit(:username, :email, :id)
   end
 
 end

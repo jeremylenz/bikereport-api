@@ -4,10 +4,13 @@ class Api::V1::SessionsController < ApplicationController
 
   def create
     user = User.find_by(email: auth_params[:email].downcase)
-    if true #user.authenticate(auth_params[:password])
-      jwt = Auth.issue({user: user.id})
+    if user #user.authenticate(auth_params[:password])
+      jwt = Auth.issue({user: {
+        id: user.id
+        }})
       render json: {jwt: jwt}
     else
+      render json: {error: "Unable to find user"}, status: 400
     end
   end
 
