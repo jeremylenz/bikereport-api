@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resources :users, except: [:new, :edit]
       resources :locations, except: [:new, :edit]
       resources :bike_paths, except: [:new, :edit]
+      post '/login', to: "sessions#create"
     end
   end
 

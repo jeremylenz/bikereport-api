@@ -1,9 +1,13 @@
+
 class Api::V1::UsersController < ApplicationController
 
+  skip_before_action :authenticate, only: [:create, :index]
   before_action :set_user, except: [:index, :create]
 
   def create
-    new_user = User.create(user_params)
+    new_user = User.new(user_params)
+    new_user.email = new_user.email.downcase
+    new_user.save
 
     if !new_user.errors.empty?
       render json: {status: "error", code: 400, message: new_user.errors.full_messages[0]}
@@ -45,7 +49,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:username, :email)
+    params.require(:user).permit(:username, :email, :id)
   end
 
 end
