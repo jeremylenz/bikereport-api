@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resources :bike_paths, except: [:new, :edit]
       post '/login', to: "sessions#create"
       post '/oauth', to: "sessions#get_oauth_string"
+      get '/twitter', to: "sessions#collect_oauth_verifier"
     end
   end
 

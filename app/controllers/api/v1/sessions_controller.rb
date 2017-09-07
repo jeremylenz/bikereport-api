@@ -18,7 +18,7 @@ class Api::V1::SessionsController < ApplicationController
 
 
   def get_oauth_string
-    # This function is to compose the Oauth 1.0a signature and generate the auth string
+    # This function is to compose the Oauth 1.0a signature and generate the auth string, then send the API request to Twitter
     status = params[:oauth][:status] || ""
     include_entities = params[:oauth][:include_entities] || ""
     oauth_consumer_key = params[:oauth][:oauth_consumer_key] || ENV["TWITTER_CONSUMER_KEY"]
@@ -158,14 +158,39 @@ class Api::V1::SessionsController < ApplicationController
                 }
 
       headers = {Authorization: dst}
-      options = {body: {
-        "oauth_callback": "oob"
-        },
+      if params[:oauth][:oauth_callback]
+        body = {"oauth_callback": params[:oauth][:oauth_callback]}
+      elsif params[:oauth][:oauth_verifier]
+        body = {"oauth_verifier": params[:oauth][:oauth_verifier]}
+      else
+        body = {}
+      end
+
+      options = {body: body,
       headers: headers}
+      puts options
+
       respons = HTTParty.post(params[:oauth][:url], options)
 
       puts respons
+      if respons.include?("&")
+        twinfo = OAuth::Helper.parse_header(respons)
 
+        oauth_token = twinfo["token"]
+        oauth_token_secret = twinfo["oauth_token_secret"]
+        user_id=twinfo["user_id"]
+        screen_name=twinfo["screen_name"]
+        oauth_callback_confirmed = (twinfo["oauth_callback_confirmed"] == "true")
+      end
+
+  end
+
+  def collect_oauth_verifier
+      oauth_token = params[:oauth_token]
+      oauth_verifier = params[:oauth_verifier]
+
+      puts 'oauth token: ', oauth_token
+      puts 'oauth verifier: ', oauth_verifier
   end
 
 
