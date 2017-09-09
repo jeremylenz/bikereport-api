@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       post '/login', to: "sessions#create"
       post '/oauth', to: "sessions#get_oauth_string"
       get '/twitter', to: "sessions#collect_oauth_verifier"
+      post '/testimageupload', to: "images#upload"
     end
   end
 
