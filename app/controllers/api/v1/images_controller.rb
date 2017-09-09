@@ -24,6 +24,7 @@ skip_before_action :authenticate
   def upload_photo(photo, filename, content_type)
 
       puts "uploadPhotoToS3.begin"
+      filename = Time.now.to_i.to_s + " " + filename
 
       photo = photo.split(',')[1]
       decoded = Base64.decode64(photo)
@@ -32,7 +33,8 @@ skip_before_action :authenticate
       obj = Aws::S3::Object.new(bucket_name: 'bikeways', key: filename)
       puts "obj=" + obj.inspect
 
-      puts 'file uploaded: ', obj.upload_file('tempfile', {content_type: content_type})
+      puts 'file uploaded: ', obj.upload_file('tempfile', {content_type: content_type, acl: "public-read"})
+      @image.image_url = obj.public_url
 
   end
 
