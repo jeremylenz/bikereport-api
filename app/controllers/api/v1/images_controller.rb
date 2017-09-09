@@ -3,10 +3,20 @@ class Api::V1::ImagesController < ApplicationController
 skip_before_action :authenticate
 
   def upload
-    @image = Image.create(image_params)
+    @image = Image.new(image_params)
     upload_photo(params[:file_data], image_params[:image_file_name], image_params[:image_content_type])
-    render json: @image
+    @image.save
+    if !@image.errors.empty?
+      render json: {status: "error", code: 400, message: @image.errors.full_messages[0]}, status: 400
+    else
+      render json: @image
+    end
 
+  end
+
+  def index
+    @images = Image.all
+    render json: @images
   end
 
 
