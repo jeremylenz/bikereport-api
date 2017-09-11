@@ -9,6 +9,7 @@ class Api::V1::ReportsController < ApplicationController
     bike_path = BikePath.find(params[:bike_path][:id])
     location = Location.find(params[:location][:id])
 
+
     new_report = Report.new(report_params)
 
     new_report.user = user
@@ -18,12 +19,42 @@ class Api::V1::ReportsController < ApplicationController
     new_report.save
 
     if !new_report.errors.empty?
-      render json: {status: "error", code: 400, message: new_report.errors.full_messages[0]}, status: 400
+      render json: {status: "error saving report", code: 400, message: new_report.errors.full_messages[0]}, status: 400
     else
-      render json: new_report
+      if params[:report][:image]
+        create_image(new_report.id)
+      end
+      render json: {report: new_report, image: @image}
     end
 
   end
+
+  def create_image(report_id)
+    puts 'creating image..'
+    @image = Image.new(image_params)
+    @image.report_id = report_id
+    upload_photo(params[:file_data], image_params[:image_file_name], image_params[:image_content_type])
+    @image.save
+    @image
+  end
+
+  def upload_photo(photo, filename, content_type)
+
+    puts "uploadPhotoToS3.begin"
+    filename = Time.now.to_i.to_s + " " + filename
+
+    photo = photo.split(',')[1]
+    decoded = Base64.decode64(photo)
+    File.write('tempfile', decoded, {encoding: "BINARY"})
+
+    obj = Aws::S3::Object.new(bucket_name: 'bikeways', key: filename)
+    puts "obj=" + obj.inspect
+
+    puts 'file uploaded: ', obj.upload_file('tempfile', {content_type: content_type, acl: "public-read"})
+    @image.image_url = obj.public_url
+
+  end
+
 
   def update
     @report.update(report_params)
@@ -72,6 +103,10 @@ class Api::V1::ReportsController < ApplicationController
 
   def report_params
     params.require(:report).permit(:report_type, :details, :likes, :timestamp)
+  end
+
+  def image_params
+    params.require(:report).permit![:image]
   end
 
 
