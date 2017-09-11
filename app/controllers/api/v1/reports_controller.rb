@@ -1,3 +1,6 @@
+require "image_processing/mini_magick"
+include ImageProcessing::MiniMagick
+
 class Api::V1::ReportsController < ApplicationController
 
   before_action :set_report, except: [:index, :create, :generate]
@@ -46,6 +49,10 @@ class Api::V1::ReportsController < ApplicationController
     photo = photo.split(',')[1]
     decoded = Base64.decode64(photo)
     File.write('tempfile', decoded, {encoding: "BINARY"})
+
+    tempfile = File.open('tempfile')
+    auto_orient!(tempfile)
+    tempfile.close
 
     obj = Aws::S3::Object.new(bucket_name: 'bikeways', key: filename)
     puts "obj=" + obj.inspect
