@@ -8,7 +8,7 @@ class Api::V1::ReportsController < ApplicationController
 
   def create
 
-    user = User.find(params[:user][:id])
+    user = User.find_by(username: params[:user][:username])
     bike_path = BikePath.find(params[:bike_path][:id])
     location = Location.find(params[:location][:id])
 

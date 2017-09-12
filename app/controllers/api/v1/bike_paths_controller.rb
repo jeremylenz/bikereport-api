@@ -26,7 +26,13 @@ class Api::V1::BikePathsController < ApplicationController
 
   def index
       @bike_paths = BikePath.all
-    render json: @bike_paths
+      response = @bike_paths.map do |bp|
+        {id: bp.id,
+        name: bp.name,
+        reports_count: bp.reports.count,
+        locations_count: bp.locations.count}
+      end
+    render json: response
   end
 
   def show

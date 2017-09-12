@@ -88,7 +88,7 @@ class Api::V1::SessionsController < ApplicationController
     # Percent encode the parameter string and append it to the output string.
     parameter_string = OAuth::Helper::escape(parameter_string)
     signature_base_string = "#{http_method}&#{url}&#{parameter_string}"
-    puts 'Signature base string: ', signature_base_string
+    # puts 'Signature base string: ', signature_base_string
 
     escaped_consumer_secret = OAuth::Helper::escape(ENV["TWITTER_CONSUMER_SECRET"])   # ENV["TWITTER_CONSUMER_SECRET"]  # kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw
     tts = params[:oauth][:tts]
@@ -99,9 +99,9 @@ class Api::V1::SessionsController < ApplicationController
     else
       signing_key = "#{escaped_consumer_secret}&#{escaped_tts}"
     end
-    puts 'Signing key: ', signing_key
+    # puts 'Signing key: ', signing_key
     oauth_signature = Base64.encode64("#{OpenSSL::HMAC.digest('sha1', signing_key, signature_base_string)}").strip
-    puts 'Signature: ', oauth_signature
+    # puts 'Signature: ', oauth_signature
 
     # Now build the authorization string.  7 k/v pairs including EITHER a callback OR a token.
 
@@ -130,7 +130,7 @@ class Api::V1::SessionsController < ApplicationController
     end
 
     dst << oauth_kv_pairs.join(', ')
-    puts 'Authorization: ', dst
+    # puts 'Authorization: ', dst
 
 
 
@@ -152,7 +152,7 @@ class Api::V1::SessionsController < ApplicationController
 
       respons = HTTParty.post(params[:oauth][:url], options)
 
-      puts respons
+      # puts respons
       if respons.include?("&")
         twinfo = OAuth::Helper.parse_header(respons)
 
@@ -177,8 +177,8 @@ class Api::V1::SessionsController < ApplicationController
       oauth_token = params[:oauth_token]
       oauth_verifier = params[:oauth_verifier]
 
-      puts 'oauth token: ', oauth_token
-      puts 'oauth verifier: ', oauth_verifier
+      # puts 'oauth token: ', oauth_token
+      # puts 'oauth verifier: ', oauth_verifier
 
       redirect_to "http://localhost:3001/twitter/#{oauth_token}/#{oauth_verifier}"
   end
@@ -192,7 +192,7 @@ class Api::V1::SessionsController < ApplicationController
 
     resp = HTTParty.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=#{client_id}&redirect_uri=#{redirect_uri}&client_secret=#{client_secret}&code=#{code}")
 
-    puts 'Facebook response: ', resp
+    # puts 'Facebook response: ', resp
     access_token = resp["access_token"]
 
     resp = HTTParty.get("https://graph.facebook.com/v2.3/me?access_token=#{access_token}")
