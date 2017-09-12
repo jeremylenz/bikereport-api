@@ -184,6 +184,49 @@ class Api::V1::SessionsController < ApplicationController
   end
 
 
+  def get_fb_access_token
+    client_id = params[:facebook][:client_id]
+    redirect_uri = params[:facebook][:redirect_uri]
+    client_secret = ENV["FACEBOOK_APP_SECRET"]
+    code = params[:facebook][:code]
+
+    resp = HTTParty.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=#{client_id}&redirect_uri=#{redirect_uri}&client_secret=#{client_secret}&code=#{code}")
+
+    puts 'Facebook response: ', resp
+    access_token = resp["access_token"]
+
+    resp = HTTParty.get("https://graph.facebook.com/v2.3/me?access_token=#{access_token}")
+    resp = JSON.parse(resp.body)
+
+    facebook_user_id = resp["id"]
+    facebook_name = resp["name"]
+
+    user = User.find_or_create_by(username: facebook_name)
+
+    # render json: {details: resp, token: access_token}
+
+    # {
+    #   "access_token": {access-token},
+    #   "token_type": {type},
+    #   "expires_in":  {seconds-til-expiration}
+    # }
+
+    if user.errors.empty?
+      jwt = Auth.issue({user: {
+        id: user.id,
+        facebook_user_id: facebook_user_id,
+        username: facebook_name
+        }})
+      render json: {jwt: jwt, username: facebook_name}
+    else
+      render json: {error: "Unable to find user"}, status: 400
+    end
+
+
+  end
+
+
+
   private
     def auth_params
       params.require(:user).permit(:email, :screen_name, :oauth_token, :oauth_token_secret)

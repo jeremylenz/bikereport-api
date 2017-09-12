@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :images, only: [:index]
       post '/login', to: "sessions#create"
       post '/oauth', to: "sessions#get_oauth_string"
+      post '/facebook_oauth', to: "sessions#get_fb_access_token"
       get '/twitter', to: "sessions#collect_oauth_verifier"
       post '/testimageupload', to: "images#upload"
     end
