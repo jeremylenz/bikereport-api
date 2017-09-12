@@ -37,7 +37,6 @@ skip_before_action :authenticate
   def upload_photo(photo, filename, content_type)
 
       puts "uploadPhotoToS3.begin"
-      byebug
       filename = Time.now.to_i.to_s + " " + filename
 
       photo = photo.split(',')[1]
