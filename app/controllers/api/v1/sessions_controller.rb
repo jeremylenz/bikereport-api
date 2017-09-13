@@ -1,4 +1,7 @@
+require_relative '/../../../auth.rb'
+
 class Api::V1::SessionsController < ApplicationController
+
 
   skip_before_action :authenticate
 
