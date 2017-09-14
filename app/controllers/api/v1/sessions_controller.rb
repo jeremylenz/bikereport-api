@@ -202,7 +202,7 @@ class Api::V1::SessionsController < ApplicationController
       # puts 'oauth token: ', oauth_token
       # puts 'oauth verifier: ', oauth_verifier
 
-      redirect_to "http://localhost:3001/twitter/#{oauth_token}/#{oauth_verifier}"
+      redirect_to "#{ENV["OUR_OWN_URL"]}/twitter/#{oauth_token}/#{oauth_verifier}"
   end
 
 
