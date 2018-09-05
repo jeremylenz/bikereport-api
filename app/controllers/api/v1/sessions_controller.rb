@@ -175,11 +175,11 @@ class Api::V1::SessionsController < ApplicationController
       if body == {}
         options = {headers: headers}
       end
-      puts options
+      puts "Options: ", options
 
       respons = HTTParty.post(params[:oauth][:url], options)
 
-      # puts respons
+      # puts "Response: ", respons
       if respons.include?("&")
         twinfo = OAuth::Helper.parse_header(respons)
 
